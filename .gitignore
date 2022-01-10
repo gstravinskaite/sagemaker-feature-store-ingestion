@@ -1,2 +1,7 @@
 *.class
 *.log
+src/main/resources/data
+.idea
+target
+project
+.bsp
