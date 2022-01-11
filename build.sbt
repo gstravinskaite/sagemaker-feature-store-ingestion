@@ -14,7 +14,8 @@ val hadoopVersion = "2.8.5"
 lazy val jacksonVersion        = "2.12.3"
 
 compileOrder := CompileOrder.JavaThenScala
-
+ivyLoggingLevel := UpdateLogging.Full
+logLevel := Level.Debug
 
 val commonsLangExclusions = Seq(
   // Spark relies on an older version of Apache Commons Lang which clashes with the DAL
@@ -41,18 +42,6 @@ val jacksonExclusions = Seq(
 
 libraryDependencies ++= Seq(
 
-  // Elsevier
-//  "com.elsevier.recs" %% "recs-data-access-spark-for-recs-lib" % "0.1.136" excludeAll (commonsLangExclusions: _*),
-//  "com.elsevier.recs" %% "recommender-auth-common"             % "1.0.3"   excludeAll (commonsLangExclusions: _*),
-
-  // AWS
-  "com.amazonaws" % "aws-lambda-java-core"          % "1.2.1",
-  "com.amazonaws" % "aws-lambda-java-events"        % "3.9.0",
-  "com.amazonaws" % "aws-lambda-java-log4j"         % "1.0.0",
-
-  "com.amazonaws" % "aws-java-sdk-s3"               % awsSdkVersion excludeAll (jacksonExclusions: _*),
-  "com.amazonaws" % "aws-java-sdk-sns"              % awsSdkVersion excludeAll (jacksonExclusions: _*),
-  "com.amazonaws" % "aws-java-sdk-secretsmanager"   % awsSdkVersion excludeAll (jacksonExclusions: _*),
   "com.amazonaws" % "aws-java-sdk-sagemakerruntime" % awsSdkVersion excludeAll (jacksonExclusions: _*),
   "com.amazonaws" % "aws-java-sdk-sagemaker"            % awsSdkVersion excludeAll (jacksonExclusions: _*),
   "com.amazonaws" % "aws-java-sdk-sts"            % awsSdkVersion excludeAll (jacksonExclusions: _*),
@@ -77,4 +66,9 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.module"     %  "jackson-module-paranamer"  % jacksonVersion,
   "com.fasterxml.jackson.module"     %% "jackson-module-scala"      % jacksonVersion,
 
+)
+
+
+excludeDependencies ++= Seq(
+  ExclusionRule("com.amazonaws", "aws-java-sdk-bundle")
 )

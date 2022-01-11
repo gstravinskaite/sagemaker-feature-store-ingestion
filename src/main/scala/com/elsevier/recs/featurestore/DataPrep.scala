@@ -1,12 +1,12 @@
 package com.elsevier.recs.featurestore
 import com.elsevier.recs.featurestore.client.SparkClient
+import org.apache.spark.sql
 import org.apache.spark.sql.functions.current_timestamp
-
 
 
 class DataPrep extends SparkClient{
 
-  def readAndProcessData(filepath: String): Unit = {
+  def readAndProcessData(filepath: String): sql.DataFrame = {
 
     val fullData = sparkSession.read.parquet(filepath)
     // EventTime is a needed field for feature groups
@@ -14,7 +14,8 @@ class DataPrep extends SparkClient{
       "numPublications", "numPubsThisYear", "numPubsLast5Year", "givenName", "surname", "id", "email",
       s"${current_timestamp()} as EventTime"
     )
-    neededData.show()
+    neededData.printSchema()
+    neededData
   }
 }
 
