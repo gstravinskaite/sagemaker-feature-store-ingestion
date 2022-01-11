@@ -43,9 +43,10 @@ val jacksonExclusions = Seq(
 libraryDependencies ++= Seq(
 
   "com.amazonaws" % "aws-java-sdk-sagemakerruntime" % awsSdkVersion excludeAll (jacksonExclusions: _*),
-  "com.amazonaws" % "aws-java-sdk-sagemaker"            % awsSdkVersion excludeAll (jacksonExclusions: _*),
-  "com.amazonaws" % "aws-java-sdk-sts"            % awsSdkVersion excludeAll (jacksonExclusions: _*),
-  "software.amazon.sagemaker.featurestore" %% "sagemaker-feature-store-spark-sdk" % "1.0.0",
+  "com.amazonaws" % "aws-java-sdk-sagemaker"        % awsSdkVersion excludeAll (jacksonExclusions: _*),
+  "com.amazonaws" % "aws-java-sdk-sts"              % awsSdkVersion excludeAll (jacksonExclusions: _*),
+  "software.amazon.sagemaker.featurestore"          %% "sagemaker-feature-store-spark-sdk" % "1.0.0",
+  "com.amazonaws" % "aws-java-sdk-sagemakerfeaturestoreruntime" % awsSdkVersion excludeAll (jacksonExclusions: _*),
 
 
   // Config

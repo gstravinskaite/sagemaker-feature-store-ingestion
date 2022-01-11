@@ -1,17 +1,20 @@
 package com.elsevier.recs.featurestore.client
 
 import com.amazonaws.services.sagemaker.model.{CreateFeatureGroupRequest, CreateFeatureGroupResult, DeleteFeatureGroupRequest, DeleteFeatureGroupResult, ListFeatureGroupsRequest}
-import com.elsevier.recs.featurestore.{ConfigComponent, SageMakerConfig}
-import com.amazonaws.services.sagemaker.{AbstractAmazonSageMaker, AmazonSageMakerClientBuilder}
+import com.elsevier.recs.featurestore.ConfigComponent
+import com.amazonaws.services.sagemaker.{AmazonSageMaker, AmazonSageMakerClientBuilder}
+import com.amazonaws.services.sagemakerfeaturestoreruntime.model.GetRecordRequest
+import com.amazonaws.services.sagemakerfeaturestoreruntime.{AmazonSageMakerFeatureStoreRuntime, AmazonSageMakerFeatureStoreRuntimeClientBuilder}
 
 
 
-trait SageMakerClient{
- // def listFeatureGroups : String
+
+trait SageMakerClient[A]{
+  def client: A
 }
 
 
-class SageMakerClientImpl extends ConfigComponent with SageMakerClient {
+case class SageMakerClientImpl() extends ConfigComponent with SageMakerClient[AmazonSageMaker] {
 
   val client = AmazonSageMakerClientBuilder.standard().withRegion(sageMakerConfig.region).build()
 
@@ -23,29 +26,38 @@ class SageMakerClientImpl extends ConfigComponent with SageMakerClient {
     result
   }
 
-  def createFS(request: CreateFeatureGroupRequest): CreateFeatureGroupResult = {
+   def runCreateFeatureGroup(request: CreateFeatureGroupRequest): CreateFeatureGroupResult = {
     val result = client.createFeatureGroup(request)
 
     result
   }
 
-  def deleteFS(name:String): DeleteFeatureGroupResult = {
+  def runDeleteFeatureGroup(name:String): DeleteFeatureGroupResult = {
     val request = new DeleteFeatureGroupRequest()
     request.setFeatureGroupName(name)
     val result = client.deleteFeatureGroup(request)
 
     result
   }
-
 }
 
-object listFeatureGroups extends ConfigComponent with SparkClient {
+
+case object FeatureStoreClient extends SageMakerClient[AmazonSageMakerFeatureStoreRuntime] with ConfigComponent {
+  val client = AmazonSageMakerFeatureStoreRuntimeClientBuilder.standard().withRegion(sageMakerConfig.region).build()
+
+  def getDataFromFeatureStore(featureGroupName: String, id: String): String = {
+    val request = new GetRecordRequest()
+    request.setFeatureGroupName(featureGroupName)
+    request.setRecordIdentifierValueAsString(id)
+
+    val response = client.getRecord(request).toString
+
+    response
+  }
+}
+object SageMakerClient extends ConfigComponent {
   def main(args: Array[String]): Unit = {
-    val client = new SageMakerClientImpl()
-//    println(client.listFeatureGroups)
-
-    println(client.deleteFS("number-publications-2022-01-11"))
-
+    println(FeatureStoreClient.getDataFromFeatureStore("number-publications-2022-01-11", "10038929200"))
   }
 }
 

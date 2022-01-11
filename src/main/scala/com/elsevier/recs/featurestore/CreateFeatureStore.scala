@@ -1,10 +1,10 @@
 package com.elsevier.recs.featurestore
 
+import com.amazonaws.services.sagemaker.AmazonSageMaker
+
 import java.time.LocalDate
-import com.amazonaws.services.sagemaker.model.{CreateFeatureGroupRequest, FeatureDefinition, FeatureGroup, OfflineStoreConfig, OnlineStoreConfig, S3StorageConfig}
-import com.elsevier.recs.featurestore.client.{SageMakerClientImpl, SparkClient}
-import org.apache.spark.sql
-import software.amazon.sagemaker.featurestore.sparksdk.FeatureStoreManager
+import com.amazonaws.services.sagemaker.model.{CreateFeatureGroupRequest, FeatureDefinition, OfflineStoreConfig, OnlineStoreConfig, S3StorageConfig}
+import com.elsevier.recs.featurestore.client.SageMakerClientImpl
 
 import collection.JavaConverters._
 import collection.mutable._
@@ -91,7 +91,7 @@ class CreateFeatureStore extends SageMakerClientImpl {
 
 
   def createTest(request: CreateFeatureGroupRequest): String = {
-   val response = createFS(request)
+   val response = runCreateFeatureGroup(request)
 
     response.toString
   }
