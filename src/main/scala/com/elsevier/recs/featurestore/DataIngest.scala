@@ -5,7 +5,13 @@ import org.apache.spark.sql.functions.{current_timestamp, date_format}
 import software.amazon.sagemaker.featurestore.sparksdk.FeatureStoreManager
 
 
-class DataIngest extends SparkClient {
+case object DataIngest extends SparkClient {
+
+  def main(args: Array[String]): Unit = {
+    val filePath = System.getProperty("user.dir") + "/src/main/resources/data/part-00000-5f001ccd-45f5-42fc-abf3-615f6fcbe4f6-c000.snappy.parquet"
+    val data = readAndProcessData(filePath)
+    println(data)
+  }
 
   def readAndProcessData(filepath: String): sql.DataFrame = {
 
@@ -30,14 +36,5 @@ class DataIngest extends SparkClient {
     featureStoreManager.ingestData(inputData, featureGroupArn, directOfflineStore = true)
 
   }
-}
 
-object DataIngest {
-
-  def main(args: Array[String]): Unit = {
-    val test = new DataIngest
-    val filePath = System.getProperty("user.dir") + "/src/main/resources/data/part-00000-5f001ccd-45f5-42fc-abf3-615f6fcbe4f6-c000.snappy.parquet"
-    val data = test.readAndProcessData(filePath)
-    println(data)
-  }
 }

@@ -7,16 +7,15 @@ import com.amazonaws.services.sagemakerfeaturestoreruntime.model.GetRecordReques
 import com.amazonaws.services.sagemakerfeaturestoreruntime.{AmazonSageMakerFeatureStoreRuntime, AmazonSageMakerFeatureStoreRuntimeClientBuilder}
 
 
-
-
 trait SageMakerClient[A]{
   def client: A
 }
 
 
-case class SageMakerClientImpl() extends ConfigComponent with SageMakerClient[AmazonSageMaker] {
+case object SageMakerClientImpl extends ConfigComponent with SageMakerClient[AmazonSageMaker] {
 
-  val client = AmazonSageMakerClientBuilder.standard().withRegion(sageMakerConfig.region).build()
+  val client: AmazonSageMaker = AmazonSageMakerClientBuilder.standard().withRegion(sageMakerConfig.region).build()
+
 
   def listFeatureGroups: String = {
     val request = new ListFeatureGroupsRequest()
@@ -43,7 +42,12 @@ case class SageMakerClientImpl() extends ConfigComponent with SageMakerClient[Am
 
 
 case object FeatureStoreClient extends SageMakerClient[AmazonSageMakerFeatureStoreRuntime] with ConfigComponent {
-  val client = AmazonSageMakerFeatureStoreRuntimeClientBuilder.standard().withRegion(sageMakerConfig.region).build()
+  val client: AmazonSageMakerFeatureStoreRuntime =
+    AmazonSageMakerFeatureStoreRuntimeClientBuilder.standard().withRegion(sageMakerConfig.region).build()
+
+    def main(args: Array[String]): Unit = {
+      println(getDataFromFeatureStore("number-publications-2022-01-11", "10038929200"))
+    }
 
   def getDataFromFeatureStore(featureGroupName: String, id: String): String = {
     val request = new GetRecordRequest()
@@ -55,11 +59,7 @@ case object FeatureStoreClient extends SageMakerClient[AmazonSageMakerFeatureSto
     response
   }
 }
-object SageMakerClient extends ConfigComponent {
-  def main(args: Array[String]): Unit = {
-    println(FeatureStoreClient.getDataFromFeatureStore("number-publications-2022-01-11", "10038929200"))
-  }
-}
+
 
 
 

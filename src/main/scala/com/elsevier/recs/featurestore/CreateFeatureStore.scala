@@ -1,7 +1,5 @@
 package com.elsevier.recs.featurestore
 
-import com.amazonaws.services.sagemaker.AmazonSageMaker
-
 import java.time.LocalDate
 import com.amazonaws.services.sagemaker.model.{CreateFeatureGroupRequest, FeatureDefinition, OfflineStoreConfig, OnlineStoreConfig, S3StorageConfig}
 import com.elsevier.recs.featurestore.client.SageMakerClientImpl
@@ -10,15 +8,17 @@ import collection.JavaConverters._
 import collection.mutable._
 import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
 
-case class FD(fName: String, fType:String) extends FeatureDefinition {
+case object BuildFeatureStore  {
 
-}
-class CreateFeatureStore extends SageMakerClientImpl {
-
-  val now = LocalDate.now()
-  val FEATURE_GROUP_NAME="number-publications-" + now.toString
+  private val now = LocalDate.now()
+  val FEATURE_GROUP_NAME: String ="number-publications-" + now.toString
 
 
+  def main(args: Array[String]): Unit = {
+    val build = buildsRequest()
+    println(SageMakerClientImpl.runCreateFeatureGroup(build))
+
+  }
 
   def buildsRequest(): CreateFeatureGroupRequest = {
     val request = new CreateFeatureGroupRequest()
@@ -90,21 +90,4 @@ class CreateFeatureStore extends SageMakerClientImpl {
   }
 
 
-  def createTest(request: CreateFeatureGroupRequest): String = {
-   val response = runCreateFeatureGroup(request)
-
-    response.toString
-  }
-
-
-}
-
-
-object CreateFeatureStore{
-  def main(args: Array[String]): Unit = {
-    val test = new CreateFeatureStore
-    val build = test.buildsRequest()
-    println(test.createTest(build))
-
-  }
 }

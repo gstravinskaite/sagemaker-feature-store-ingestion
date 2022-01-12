@@ -19,5 +19,3 @@ trait SparkClient  {
 
   sparkSession.sql("set spark.sql.shuffle.partitions=4")
 }
-
-case object Spark extends SparkClient
