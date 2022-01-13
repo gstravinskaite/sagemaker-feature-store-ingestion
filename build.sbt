@@ -9,13 +9,10 @@ lazy val root = (project in file("."))
   )
 
 lazy val awsSdkVersion         = "1.12.31"
-val sparkVersion = "2.4.4"
-val hadoopVersion = "2.8.5"
+lazy val sparkVersion = "2.4.4"
+lazy val hadoopVersion = "2.8.5"
 lazy val jacksonVersion        = "2.12.3"
-
-compileOrder := CompileOrder.JavaThenScala
-ivyLoggingLevel := UpdateLogging.Full
-logLevel := Level.Debug
++3.6+
 
 val commonsLangExclusions = Seq(
   // Spark relies on an older version of Apache Commons Lang which clashes with the DAL

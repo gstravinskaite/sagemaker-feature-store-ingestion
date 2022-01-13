@@ -9,8 +9,24 @@ case object DataIngest extends SparkClient {
 
   def main(args: Array[String]): Unit = {
     val filePath = System.getProperty("user.dir") + "/src/main/resources/data/part-00000-5f001ccd-45f5-42fc-abf3-615f6fcbe4f6-c000.snappy.parquet"
-    val data = readAndProcessData(filePath)
-    println(data)
+    val jsonPath = System.getProperty("user.dir") + "/src/main/resources/ABREP_2019_204__bigrams_logistic-regression.json"
+    val data = readAndProcessLambdaJson(jsonPath)
+    println(ingestDataToFeatureStore(data))
+  }
+
+
+  def readAndProcessLambdaJson(filepath: String): sql.DataFrame = {
+    val fullData = sparkSession.read.json(filepath)
+
+    val neededData = fullData.selectExpr(
+      "numPublications", "numPubsThisYear", "numPubsLast5Year", "name", "surname", "scopusId", "email",
+    ).withColumnRenamed("name", "givenName")
+      .withColumnRenamed("scopusId","id")
+
+    val timestampedData = neededData.withColumn(
+      "EventTime", date_format(current_timestamp(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+
+    timestampedData
   }
 
   def readAndProcessData(filepath: String): sql.DataFrame = {
@@ -33,7 +49,7 @@ case object DataIngest extends SparkClient {
 
     val featureGroupArn = "arn:aws:sagemaker:us-east-1:975165675840:feature-group/number-publications-2022-01-11"
 
-    featureStoreManager.ingestData(inputData, featureGroupArn, directOfflineStore = true)
+    featureStoreManager.ingestData(inputData, featureGroupArn, directOfflineStore = false)
 
   }
 
