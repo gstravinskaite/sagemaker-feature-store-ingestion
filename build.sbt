@@ -1,6 +1,6 @@
-ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / version := "0.3.0"
 
-ThisBuild / scalaVersion := "2.12.15"
+ThisBuild/ scalaVersion := "2.12.15"
 
 lazy val root = (project in file("."))
   .settings(
@@ -9,10 +9,10 @@ lazy val root = (project in file("."))
   )
 
 lazy val awsSdkVersion         = "1.12.31"
-lazy val sparkVersion = "2.4.4"
-lazy val hadoopVersion = "2.8.5"
+lazy val sparkVersion = "3.0.3"
+lazy val hadoopVersion = "2.6.5"
 lazy val jacksonVersion        = "2.12.3"
-+3.6+
+
 
 val commonsLangExclusions = Seq(
   // Spark relies on an older version of Apache Commons Lang which clashes with the DAL
@@ -51,9 +51,9 @@ libraryDependencies ++= Seq(
   "com.iheart" %% "ficus" % "1.4.1",
 
   // Spark
-  "org.apache.spark"  %% "spark-core"                   % sparkVersion,  //% Provided excludeAll (hadoopExclusions: _*),
-  "org.apache.spark"  %% "spark-sql"                    % sparkVersion,  //% Provided excludeAll (hadoopExclusions: _*),
-  "org.apache.spark"  %% "spark-avro"                   % sparkVersion,  //% Provided excludeAll (hadoopExclusions: _*),
+  "org.apache.spark"  %% "spark-core"                   % sparkVersion, //% Provided,  // excludeAll (hadoopExclusions: _*),
+  "org.apache.spark"  %% "spark-sql"                    % sparkVersion, //% Provided,  //excludeAll (hadoopExclusions: _*),
+  "org.apache.spark"  %% "spark-avro"                   % sparkVersion, //% Provided,  //excludeAll (hadoopExclusions: _*),
 
 //  // Jackson
   "com.fasterxml.jackson.core"       %  "jackson-annotations"       % jacksonVersion,
@@ -70,3 +70,8 @@ libraryDependencies ++= Seq(
 excludeDependencies ++= Seq(
   ExclusionRule("com.amazonaws", "aws-java-sdk-bundle")
 )
+
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case x => MergeStrategy.first
+}

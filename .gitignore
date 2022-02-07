@@ -1,7 +1,7 @@
 *.class
 *.log
 src/main/resources/data
-src/main/resources/ABREP_2019_204__bigrams_logistic-regression.json
+src/main/resources/ABREP_2019_204__bigrams_logistic-regression-original.json
 .idea
 target
 project

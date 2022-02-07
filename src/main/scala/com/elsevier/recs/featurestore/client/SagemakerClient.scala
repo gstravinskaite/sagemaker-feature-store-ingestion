@@ -45,9 +45,9 @@ case object FeatureStoreClient extends SageMakerClient[AmazonSageMakerFeatureSto
   val client: AmazonSageMakerFeatureStoreRuntime =
     AmazonSageMakerFeatureStoreRuntimeClientBuilder.standard().withRegion(sageMakerConfig.region).build()
 
-    def main(args: Array[String]): Unit = {
-      println(getDataFromFeatureStore("number-publications-2022-01-11", "35614304500"))
-    }
+//  def main(args: Array[String]): Unit = {
+//    println(getDataFromFeatureStore("number-publications-2022-01-11","666666"))
+//  }
 
   def getDataFromFeatureStore(featureGroupName: String, id: String): String = {
     val request = new GetRecordRequest()
