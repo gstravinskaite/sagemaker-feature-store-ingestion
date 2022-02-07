@@ -1,16 +1,41 @@
 package com.elsevier.recs.featurestore
 import com.elsevier.recs.featurestore.client.SparkClient
 import org.apache.spark.sql
-import org.apache.spark.sql.functions.{current_timestamp, date_format}
+import org.apache.spark.sql.{Dataset, Row}
+import org.apache.spark.sql.functions.{col, column, current_timestamp, date_format, exp, explode, expr, when}
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 import software.amazon.sagemaker.featurestore.sparksdk.FeatureStoreManager
+import org.apache.spark
+
+import scala.collection.immutable.Nil.distinct
 
 
 case object DataIngest extends SparkClient {
-
   def main(args: Array[String]): Unit = {
-//    val filePath = System.getProperty("user.dir") + "/src/main/resources/data/part-00000-5f001ccd-45f5-42fc-abf3-615f6fcbe4f6-c000.snappy.parquet"
-    ingestStaticData()
+    val filepath = System.getProperty("user.dir") + "/src/main/resources/af-prod.parquet"
+    //ingestStaticData()
+//    val fullData = sparkSession.read.parquet(filepath)
+//    println(fullData.show())
+//    println(fullData.printSchema())
+
+    val fullData = sparkSession.read.parquet(filepath)
+
+
+    val neededData = fullData.selectExpr(
+      "numPublications", "numPubsThisYear", "numPubsLast5Year", "id as scopusId", "email",
+      "citationHIndex as hIndex", "pubYearFirst", "affiliations.id as affiliationId", "affiliations.country as countries",
+      "affiliations.parentId as affilParentId"
+    )
+    import neededData.sparkSession.implicits._
+    // Now need to remove duplicates from affils
+    val t = neededData.selectExpr("countries").as[Seq[String]].map(e=>e.distinct).collect()
+
+    println(t)
+
+
+
+//    val deduplicatedData = neededData.withColumn("countriesZ", t.col("country"))
+//    println(deduplicatedData.show(20, false))
   }
 
 
